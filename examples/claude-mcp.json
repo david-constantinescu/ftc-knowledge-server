@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "ftc-knowledge": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://YOUR-DEPLOYMENT.vercel.app/api/mcp"
+      ]
+    }
+  }
+}

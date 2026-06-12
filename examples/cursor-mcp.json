@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "ftc-knowledge": {
+      "url": "https://YOUR-DEPLOYMENT.vercel.app/api/mcp"
+    }
+  }
+}
