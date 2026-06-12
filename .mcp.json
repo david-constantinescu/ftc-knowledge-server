@@ -1,6 +1,7 @@
 {
   "mcpServers": {
     "ftc-knowledge": {
+      "type": "http",
       "url": "https://ftc-knowledge-server.vercel.app/api/mcp"
     }
   }
