@@ -1,0 +1,17 @@
+Beta8397__virtual_robot|java=287|pedro=13|rr=23
+FFFabulousRobotics__FTC-2024-2025|java=116|pedro=0|rr=1
+FTC-12527-FatDragon__Prototype2026-Public-LightningTerminator|java=109|pedro=16|rr=0
+FTC-12527-FatDragon__Prototype2026-Public|java=109|pedro=16|rr=0
+FTC-23511__Into-the-Deep-2025|java=136|pedro=36|rr=3
+FTC-23511__SolversLib-Quickstart|java=73|pedro=6|rr=0
+FTCTeam25619__2024_IntoTheDeep|java=89|pedro=0|rr=0
+FTCTeam25619__novapyra-robot-base-solverslib|java=87|pedro=6|rr=0
+GA-Moonshots__ftclib-pedropathing|java=114|pedro=55|rr=4
+RoboRacers__Pedro-Pathing-IntoTheDeep|java=127|pedro=61|rr=4
+Shenzhen-Robotics-Alliance__FTC-2025-RobotCode|java=281|pedro=0|rr=0
+ftcwires__centerstage-road-runner|java=77|pedro=0|rr=17
+goBILDA-Official__FTC-Starter-Kit-Robot-Into-The-Deep-Java-Example|java=54|pedro=0|rr=0
+goBILDA-Official__FtcRobotController-Add-Starter-Kit-Code|java=59|pedro=0|rr=0
+goBILDA-Official__Ri3D_24-25|java=1|pedro=0|rr=0
+trc492__FtcSamples|java=64|pedro=0|rr=0
+zihanpeter__Prototype2026-Public-ChinaChampionship|java=116|pedro=23|rr=0

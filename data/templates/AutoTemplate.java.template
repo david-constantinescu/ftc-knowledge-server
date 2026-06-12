@@ -1,0 +1,122 @@
+package org.firstinspires.ftc.teamcode.pedroPathing.auto;
+
+import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.Path;
+import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.pathgen.Point;
+import com.pedropathing.util.Constants;
+import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
+
+/**
+ * AutoTemplate - Complete Pedro Pathing autonomous OpMode template.
+ * 
+ * Key Patterns (from technical_gold.md):
+ * - Coordinate System: Forward=+X, Left=+Y, 0-144 inches (Into The Deep)
+ * - PID Zeroing Bug: Must zero PID coefficients in FConstants before tuning
+ * - PathConstraints Bug: Avoid - causes Control Hub crash
+ * - Pinpoint offset validation: Rotate robot, center should stay stationary
+ * - OTOS mounting: 10mm ±1mm from floor, clean lens daily
+ */
+@Autonomous(name = "AutoTemplate", group = "Auto")
+public class AutoTemplate extends OpMode {
+    private Follower follower;
+    private Timer pathTimer, opmodeTimer;
+    private int pathState;
+
+    // Into The Deep field: 0-144 inches, Pedro coord: Forward=+X, Left=+Y
+    // Poses are in inches, heading in radians
+    private final Pose startPose = new Pose(9, 111, Math.toRadians(270));
+    private final Pose scorePose = new Pose(14, 129, Math.toRadians(315));
+    private final Pose pickupPose = new Pose(37, 121, Math.toRadians(0));
+
+    private PathChain scorePreload, grabPickup, park;
+
+    @Override
+    public void init() {
+        pathTimer = new Timer();
+        opmodeTimer = new Timer();
+        
+        Constants.setConstants(FConstants.class, LConstants.class);
+        follower = new Follower(hardwareMap);
+        follower.setStartingPose(startPose);
+        
+        buildPaths();
+    }
+
+    public void buildPaths() {
+        // PathChain - holds endpoint during actions (2nd param = true)
+        // Use pathBuilder() for chained paths
+        scorePreload = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(startPose), new Point(scorePose)))
+                .setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading())
+                .build();
+
+        grabPickup = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scorePose), new Point(pickupPose)))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), pickupPose.getHeading())
+                .build();
+
+        // BezierCurve with control point for curved path
+        park = new Path(new BezierCurve(new Point(pickupPose), new Point(scorePose), new Point(startPose)));
+        park.setLinearHeadingInterpolation(pickupPose.getHeading(), startPose.getHeading());
+    }
+
+    public void autonomousPathUpdate() {
+        switch (pathState) {
+            case 0:
+                follower.followPath(scorePreload, true);
+                setPathState(1);
+                break;
+            case 1:
+                // Check position for reliability (better than isBusy())
+                if(follower.getPose().getX() > (scorePose.getX() - 1) && 
+                   follower.getPose().getY() > (scorePose.getY() - 1)) {
+                    follower.followPath(grabPickup, true);
+                    setPathState(2);
+                }
+                break;
+            case 2:
+                if(follower.getPose().getX() > (pickupPose.getX() - 1)) {
+                    follower.followPath(park, true);
+                    setPathState(-1);
+                }
+                break;
+        }
+    }
+
+    public void setPathState(int pState) {
+        pathState = pState;
+        pathTimer.resetTimer();
+    }
+
+    @Override
+    public void loop() {
+        follower.update();
+        autonomousPathUpdate();
+
+        telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", Math.toDegrees(follower.getPose().getHeading()));
+        telemetry.update();
+    }
+
+    @Override
+    public void start() {
+        opmodeTimer.resetTimer();
+        setPathState(0);
+    }
+
+    @Override
+    public void stop() {
+        // Safe motor stop - Pedro handles this automatically
+    }
+}

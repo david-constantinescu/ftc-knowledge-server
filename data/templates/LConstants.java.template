@@ -1,0 +1,27 @@
+package org.firstinspires.ftc.teamcode.pedroPathing.constants;
+
+import com.pedropathing.localization.GoBildaPinpointDriver;
+import com.pedropathing.localization.constants.PinpointConstants;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+public class LConstants {
+    static {
+        // Pinpoint offsets (in inches) - measure and tune these
+        PinpointConstants.forwardY = -2.4;  // Y offset from center
+        PinpointConstants.strafeX = -5.2;   // X offset from center
+        PinpointConstants.distanceUnit = DistanceUnit.INCH;
+        PinpointConstants.hardwareMapName = "pinpoint"; // must match config
+        
+        PinpointConstants.useYawScalar = false;
+        PinpointConstants.yawScalar = 1.0;
+        
+        // Encoder settings
+        PinpointConstants.useCustomEncoderResolution = false;
+        PinpointConstants.encoderResolution = GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD;
+        PinpointConstants.customEncoderResolution = 13.26; // ticks per inch if custom
+        
+        // Encoder directions - verify with robot
+        PinpointConstants.forwardEncoderDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
+        PinpointConstants.strafeEncoderDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
+    }
+}

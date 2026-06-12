@@ -1,0 +1,32 @@
+package org.firstinspires.ftc.teamcode.subsystems;
+
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
+public class SubsystemTemplate {
+    private DcMotor motor;
+    private Servo servo;
+    
+    public SubsystemTemplate(HardwareMap hardwareMap) {
+        motor = hardwareMap.get(DcMotor.class, "motorName");
+        servo = hardwareMap.get(Servo.class, "servoName");
+        
+        // Safety defaults
+        motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    
+    public void setPower(double power) {
+        motor.setPower(power);
+    }
+    
+    public void setServoPosition(double position) {
+        servo.setPosition(position);
+    }
+    
+    public void stop() {
+        motor.setPower(0);
+    }
+}
