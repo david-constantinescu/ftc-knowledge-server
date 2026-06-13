@@ -17,6 +17,6 @@ if (!existsSync(vendorPkg)) {
 }
 
 console.log("[visualizer] Building from vendor/pedro-visualizer...");
-execSync("cd vendor/pedro-visualizer && npm install && npm run build", {
+execSync("cd vendor/pedro-visualizer && npm install && npx vite build", {
   stdio: "inherit",
 });

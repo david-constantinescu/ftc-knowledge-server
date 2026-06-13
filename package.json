@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build:visualizer": "node scripts/ensure-visualizer.mjs",
     "build:visualizer:source": "cd vendor/pedro-visualizer && npm install && npm run build",
-    "build": "npm run build:visualizer && next build",
+    "build": "node scripts/ensure-visualizer.mjs && next build",
     "start": "next start",
     "lint": "next lint"
   },
