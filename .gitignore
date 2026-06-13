@@ -33,5 +33,6 @@ next-env.d.ts
 # vercel
 .vercel
 
-# vendor node_modules only (source + pre-built visualizer are committed)
+# vendor node_modules only (pre-built visualizer in public/ is committed)
+/vendor/
 /vendor/pedro-visualizer/node_modules
