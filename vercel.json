@@ -1,4 +1,7 @@
 {
+  "env": {
+    "NEXT_PUBLIC_BASE_URL": "https://ftc-knowledge-server.vercel.app"
+  },
   "functions": {
     "app/api/[transport]/route.ts": {
       "maxDuration": 60
