@@ -9,6 +9,7 @@ import {
   searchCodebase,
 } from "@/lib/knowledge";
 import { getPattern, type PatternCategory } from "@/lib/patterns";
+import { registerVisualizerTools } from "@/lib/visualizer/mcp";
 
 const handler = createMcpHandler(
   (server) => {
@@ -146,6 +147,8 @@ const handler = createMcpHandler(
         return { content: [{ type: "text" as const, text }] };
       }
     );
+
+    registerVisualizerTools(server);
   },
   {},
   {

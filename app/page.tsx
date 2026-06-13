@@ -23,6 +23,37 @@ export default async function Home() {
       </header>
 
       <section style={styles.section}>
+        <h2>Pedro Path Visualizer</h2>
+        <p>
+          Interactive path planner integrated with MCP tools. AI agents can create
+          paths, preview them on the field, and export Pedro Java code.
+        </p>
+        <p>
+          <a href={`${baseUrl}/visualizer`} style={{ color: "#2563eb" }}>
+            Open Path Visualizer →
+          </a>
+        </p>
+        <ul style={styles.list}>
+          <li>
+            <strong>ftc_visualizer_create_path</strong> — create path session with
+            waypoints
+          </li>
+          <li>
+            <strong>ftc_visualizer_add_segment</strong> — add path segment
+          </li>
+          <li>
+            <strong>ftc_visualizer_get_session</strong> — get preview URL + .pp data
+          </li>
+          <li>
+            <strong>ftc_visualizer_export_code</strong> — export PathChain Java
+          </li>
+          <li>
+            <strong>ftc_visualizer_import_pp</strong> — import .pp trajectory file
+          </li>
+        </ul>
+      </section>
+
+      <section style={styles.section}>
         <h2>Connect from Cursor</h2>
         <p>
           Add this to your project or global{" "}
