@@ -1,0 +1,30 @@
+{
+  "teamNumber": 12345,
+  "season": "DECODE 2025-2026",
+  "alliance": "blue",
+  "drivetrain": "mecanum",
+  "localizer": "pinpoint",
+  "controlHubNames": {
+    "leftFront": "leftFront",
+    "leftBack": "leftBack",
+    "rightFront": "rightFront",
+    "rightBack": "rightBack"
+  },
+  "servos": {
+    "intake": "intake",
+    "claw": "claw"
+  },
+  "sensors": {
+    "pinpoint": "pinpoint",
+    "colorSensor": "color"
+  },
+  "massLbs": 42,
+  "trackWidthIn": 13.5,
+  "wheelDiameterIn": 4,
+  "followerTuning": {
+    "translationalP": 0.1,
+    "headingP": 0.5,
+    "driveP": 0.015
+  },
+  "notes": "Pinpoint forward-facing. Mirror auto paths for red alliance."
+}

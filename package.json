@@ -5,7 +5,9 @@
   "description": "Remote MCP server for FTC + Pedro Pathing research corpus",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build:visualizer": "node scripts/ensure-visualizer.mjs",
+    "build:visualizer:source": "cd vendor/pedro-visualizer && npm install && npm run build",
+    "build": "npm run build:visualizer && next build",
     "start": "next start",
     "lint": "next lint"
   },

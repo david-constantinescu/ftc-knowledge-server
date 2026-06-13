@@ -1,9 +1,14 @@
 import {
+  decodeTrajectoryPayload,
+  encodeTrajectoryPayload,
+} from "./codec";
+import {
   createEmptyTrajectory,
   getDefaultStartPoint,
   PATH_COLORS,
   randomId,
 } from "./defaults";
+import { trajectoryToPp } from "./pp";
 import type {
   AddSegmentInput,
   CreateSessionInput,
@@ -123,55 +128,16 @@ export function addSegment(
 }
 
 export function resetTrajectory(field?: string): TrajectoryData {
-  const f =
-    field === "intothedeep.webp" || field === "centerstage.webp"
-      ? field
-      : "decode.webp";
+  const f = field === "intothedeep.webp" ? field : "decode.webp";
   return createEmptyTrajectory(f);
 }
 
-export function trajectoryToPp(data: TrajectoryData): string {
-  return JSON.stringify(
-    {
-      startPoint: data.startPoint,
-      lines: data.lines,
-      shapes: data.shapes,
-      pathChains: data.pathChains,
-    },
-    null,
-    2
-  );
-}
-
-export function parsePp(json: string): TrajectoryData {
-  const parsed = JSON.parse(json) as Partial<TrajectoryData>;
-  const base = createEmptyTrajectory(
-    (parsed as { fieldMap?: string }).fieldMap as
-      | "decode.webp"
-      | "intothedeep.webp"
-      | undefined
-  );
-  return {
-    ...base,
-    ...parsed,
-    startPoint: parsed.startPoint ?? getDefaultStartPoint(),
-    lines: parsed.lines ?? base.lines,
-    shapes: parsed.shapes ?? base.shapes,
-    pathChains: parsed.pathChains ?? base.pathChains,
-    fieldMap: parsed.fieldMap ?? base.fieldMap,
-  };
-}
-
-export function encodeTrajectoryPayload(data: TrajectoryData): string {
-  return Buffer.from(JSON.stringify(data)).toString("base64url");
-}
-
-export function decodeTrajectoryPayload(encoded: string): TrajectoryData {
-  const json = Buffer.from(encoded, "base64url").toString("utf-8");
-  return parsePp(json);
-}
+export { parsePp, trajectoryToPp } from "./pp";
+export { encodeTrajectoryPayload, decodeTrajectoryPayload };
 
 export function sessionSummary(session: VisualizerSession, baseUrl: string) {
+  const encoded = encodeTrajectoryPayload(session.data);
+  const shareUrl = `${baseUrl}/official-visualizer/index.html?data=${encoded}`;
   return {
     id: session.id,
     name: session.name,
@@ -184,8 +150,11 @@ export function sessionSummary(session: VisualizerSession, baseUrl: string) {
       y: l.endPoint.y,
       heading: l.endPoint.heading,
     })),
-    previewUrl: `${baseUrl}/visualizer?session=${session.id}`,
-    editUrl: `${baseUrl}/visualizer?session=${session.id}`,
+    /** Prefer shareUrl — survives serverless cold starts; session ID is instance-local only */
+    previewUrl: shareUrl,
+    shareUrl,
+    editUrl: shareUrl,
+    sessionUrl: `${baseUrl}/official-visualizer/index.html?session=${session.id}`,
     officialVisualizerNote:
       "Download the .pp file from the preview page and load it at https://visualizer.pedropathing.com",
     ppJson: trajectoryToPp(session.data),

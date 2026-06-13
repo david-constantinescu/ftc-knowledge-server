@@ -71,7 +71,7 @@ export interface VisualizerSession {
   data: TrajectoryData;
 }
 
-export type FieldMapId = "decode.webp" | "intothedeep.webp" | "centerstage.webp";
+export type FieldMapId = "decode.webp" | "intothedeep.webp";
 
 export interface SegmentInput {
   x: number;

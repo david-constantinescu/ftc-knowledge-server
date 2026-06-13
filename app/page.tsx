@@ -25,32 +25,39 @@ export default async function Home() {
       <section style={styles.section}>
         <h2>Pedro Path Visualizer</h2>
         <p>
-          Interactive path planner integrated with MCP tools. AI agents can create
-          paths, preview them on the field, and export Pedro Java code.
+          Official Pedro Pathing Visualizer (full UI) with AI bridge layer. Agents
+          can control every feature via <code>window.__PEDRO_VISUALIZER__</code> or
+          browser MCP.
         </p>
         <p>
           <a href={`${baseUrl}/visualizer`} style={{ color: "#2563eb" }}>
-            Open Path Visualizer →
+            Open Official Visualizer →
           </a>
         </p>
         <ul style={styles.list}>
           <li>
-            <strong>ftc_visualizer_create_path</strong> — create path session with
-            waypoints
+            <strong>ftc_begin_ftc_session</strong> — REQUIRED first call for any
+            FTC coding task
           </li>
           <li>
-            <strong>ftc_visualizer_add_segment</strong> — add path segment
+            <strong>ftc_autonomous_workflow</strong> — REQUIRED when autonomous /
+            auto / PathChain is mentioned
           </li>
           <li>
-            <strong>ftc_visualizer_get_session</strong> — get preview URL + .pp data
+            <strong>ftc_list_mcp_tools</strong> — full tool catalog
           </li>
           <li>
-            <strong>ftc_visualizer_export_code</strong> — export PathChain Java
+            <strong>ftc_visualizer_create_path</strong> +{" "}
+            <strong>ftc_visualizer_execute</strong> — official visualizer + export
           </li>
           <li>
-            <strong>ftc_visualizer_import_pp</strong> — import .pp trajectory file
+            <strong>ftc_robot_context</strong> — hardware names before OpModes
           </li>
         </ul>
+        <p style={styles.note}>
+          See <code>AGENTS.md</code> and Cursor rule{" "}
+          <code>.cursor/rules/ftc-mcp-required.mdc</code> for agent workflows.
+        </p>
       </section>
 
       <section style={styles.section}>

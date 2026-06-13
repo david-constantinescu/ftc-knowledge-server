@@ -1,42 +1,20 @@
-import VisualizerClient from "./visualizer-client";
+import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "Pedro Path Visualizer | FTC Knowledge",
+  title: "Pedro Pathing Visualizer | FTC Knowledge",
   description:
-    "Interactive Pedro Pathing path planner — design autonomous paths, preview on field, export Java code",
+    "Official Pedro Pathing Visualizer with AI bridge — full path authoring, export, simulation",
 };
 
 export default async function VisualizerPage({
   searchParams,
 }: {
-  searchParams: Promise<{ session?: string }>;
+  searchParams: Promise<{ session?: string; data?: string }>;
 }) {
   const params = await searchParams;
-  return (
-    <div style={{ minHeight: "100vh", background: "#f8fafc" }}>
-      <header
-        style={{
-          padding: "16px 32px",
-          borderBottom: "1px solid #e2e8f0",
-          background: "#fff",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <div>
-          <a href="/" style={{ color: "#64748b", fontSize: 13, textDecoration: "none" }}>
-            ← FTC Knowledge
-          </a>
-          <h1 style={{ margin: "4px 0 0", fontSize: 20 }}>
-            Pedro Pathing Visualizer
-          </h1>
-        </div>
-        <span style={{ fontSize: 12, color: "#64748b" }}>
-          Compatible with .pp format · MCP tools available
-        </span>
-      </header>
-      <VisualizerClient initialSessionId={params.session} />
-    </div>
-  );
+  const qs = new URLSearchParams();
+  if (params.data) qs.set("data", params.data);
+  if (params.session) qs.set("session", params.session);
+  const query = qs.toString();
+  redirect(`/official-visualizer/index.html${query ? `?${query}` : ""}`);
 }

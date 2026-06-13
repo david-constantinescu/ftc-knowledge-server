@@ -10,9 +10,18 @@ import {
 } from "@/lib/knowledge";
 import { getPattern, type PatternCategory } from "@/lib/patterns";
 import { registerVisualizerTools } from "@/lib/visualizer/mcp";
+import { registerRobotTools } from "@/lib/robot/mcp";
+import { registerTelemetryTools } from "@/lib/telemetry/mcp";
+import {
+  registerOrchestratorTools,
+  registerOrchestratorPromptsAndResources,
+  getMcpServerInstructions,
+} from "@/lib/mcp/orchestrator";
 
 const handler = createMcpHandler(
   (server) => {
+    registerOrchestratorTools(server);
+    registerOrchestratorPromptsAndResources(server);
     server.registerTool(
       "ftc_search_research",
       {
@@ -149,8 +158,16 @@ const handler = createMcpHandler(
     );
 
     registerVisualizerTools(server);
+    registerRobotTools(server);
+    registerTelemetryTools(server);
   },
-  {},
+  {
+    serverInfo: {
+      name: "ftc-knowledge",
+      version: "2.0.0",
+    },
+    instructions: getMcpServerInstructions(),
+  },
   {
     basePath: "/api",
     maxDuration: 60,

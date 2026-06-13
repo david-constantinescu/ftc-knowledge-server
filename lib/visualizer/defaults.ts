@@ -5,7 +5,6 @@ export const FIELD_SIZE = 141.5;
 export const FIELD_OPTIONS: { id: FieldMapId; label: string }[] = [
   { id: "decode.webp", label: "DECODE (2025-2026)" },
   { id: "intothedeep.webp", label: "Into The Deep (2024-2025)" },
-  { id: "centerstage.webp", label: "Centerstage (2023-2024)" },
 ];
 
 export function getDefaultStartPoint(): Point {

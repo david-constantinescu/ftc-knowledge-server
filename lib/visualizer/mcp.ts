@@ -17,6 +17,11 @@ import {
   replaceSessionData,
 } from "./sessions";
 import type { AddSegmentInput, CreateSessionInput } from "./types";
+import {
+  VISUALIZER_BRIDGE_ACTIONS,
+  bridgeHelp,
+  buildBridgeInvocation,
+} from "./bridgeActions";
 
 function getBaseUrl() {
   if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL;
@@ -51,11 +56,11 @@ export function registerVisualizerTools(server: {
     {
       title: "Create Pedro Path Visualizer Session",
       description:
-        "Create a new path planning session on the Pedro Pathing visualizer. Returns a preview URL and session ID. Coordinate system: Forward=+X, Left=+Y, field 0-144 inches.",
+        "Create a path on the official Pedro Pathing Visualizer (full UI at shareUrl). Returns shareUrl with embedded ?data= state. Coordinate system: Forward=+X, Left=+Y, field 0-144 inches.",
       inputSchema: {
         name: z.string().optional().describe("Session name"),
         field: z
-          .enum(["decode.webp", "intothedeep.webp", "centerstage.webp"])
+          .enum(["decode.webp", "intothedeep.webp"])
           .optional()
           .describe("Field map (default decode.webp)"),
         startPoint: z
@@ -240,6 +245,57 @@ export function registerVisualizerTools(server: {
   );
 
   server.registerTool(
+    "ftc_visualizer_bridge_help",
+    {
+      title: "Official Visualizer AI Bridge Documentation",
+      description:
+        "How AI agents control the official Pedro Pathing Visualizer via window.__PEDRO_VISUALIZER__ and browser MCP. Lists all programmatic actions.",
+      inputSchema: {},
+    },
+    async () => ({
+      content: [{ type: "text" as const, text: bridgeHelp(getBaseUrl()) }],
+    })
+  );
+
+  server.registerTool(
+    "ftc_visualizer_execute",
+    {
+      title: "Execute Visualizer Bridge Action",
+      description:
+        "Returns JavaScript to run on the official visualizer page for full UI parity (play, export, optimize, undo, file ops, etc.). Use with browser_navigate to shareUrl then CDP evaluate. Actions: getState, addPath, exportJava, optimizeAll, click, ...",
+      inputSchema: {
+        action: z
+          .enum(VISUALIZER_BRIDGE_ACTIONS as unknown as [string, ...string[]])
+          .describe("Bridge action to execute"),
+        params: z
+          .record(z.string(), z.unknown())
+          .optional()
+          .describe("Action parameters (e.g. { mode: 'class' } for exportJava)"),
+        shareUrl: z
+          .string()
+          .optional()
+          .describe("Optional visualizer URL with ?data= — from create_path shareUrl"),
+      },
+    },
+    async (input) => {
+      const { action, params, shareUrl } = input as {
+        action: string;
+        params?: Record<string, unknown>;
+        shareUrl?: string;
+      };
+      const invocation = buildBridgeInvocation(
+        getBaseUrl(),
+        action,
+        params,
+        shareUrl
+      );
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify(invocation, null, 2) }],
+      };
+    }
+  );
+
+  server.registerTool(
     "ftc_visualizer_list_sessions",
     {
       title: "List Visualizer Sessions",
@@ -270,18 +326,21 @@ export function handleVisualizerApi(
 
   if (action === "info") {
     return {
-      visualizerUrl: `${baseUrl}/visualizer`,
-      officialVisualizer: "https://visualizer.pedropathing.com",
+      visualizerUrl: `${baseUrl}/official-visualizer/index.html`,
+      redirectFrom: `${baseUrl}/visualizer`,
+      officialUpstream: "https://github.com/Pedro-Pathing/Visualizer",
+      bridge: "window.__PEDRO_VISUALIZER__.execute(action, params)",
+      bridgeActions: VISUALIZER_BRIDGE_ACTIONS,
       fields: FIELD_OPTIONS,
       actions: [
         "info",
         "create",
         "get",
-        "update",
         "add_segment",
         "export",
         "import",
         "list",
+        "data",
       ],
     };
   }
@@ -295,7 +354,12 @@ export function handleVisualizerApi(
     const id = searchParams.get("sessionId") ?? searchParams.get("id");
     if (!id) return { error: "Missing sessionId" };
     const session = getSession(id);
-    if (!session) return { error: "Session not found" };
+    if (!session) {
+      return {
+        error: "Session not found",
+        hint: "Serverless sessions expire. Use shareUrl (?data=...) from MCP tools or re-create the path.",
+      };
+    }
     return sessionSummary(session, baseUrl);
   }
 
@@ -303,7 +367,12 @@ export function handleVisualizerApi(
     const sessionId = (body?.sessionId as string) ?? searchParams.get("sessionId");
     if (!sessionId) return { error: "Missing sessionId" };
     const session = getSession(sessionId);
-    if (!session) return { error: "Session not found" };
+    if (!session) {
+      return {
+        error: "Session not found",
+        hint: "Serverless sessions expire. Use shareUrl (?data=...) from MCP tools or re-create the path.",
+      };
+    }
     const updated = replaceSessionData(
       sessionId,
       addSegment(session.data, body?.segment as Parameters<typeof addSegment>[1])
@@ -315,7 +384,12 @@ export function handleVisualizerApi(
     const id = searchParams.get("sessionId");
     if (!id) return { error: "Missing sessionId" };
     const session = getSession(id);
-    if (!session) return { error: "Session not found" };
+    if (!session) {
+      return {
+        error: "Session not found",
+        hint: "Serverless sessions expire. Use shareUrl (?data=...) from MCP tools or re-create the path.",
+      };
+    }
     const mode = searchParams.get("mode") ?? "class";
     if (mode === "pp") return { pp: trajectoryToPp(session.data) };
     if (mode === "starting_pose") {
@@ -346,7 +420,12 @@ export function handleVisualizerApi(
     const id = searchParams.get("sessionId");
     if (!id) return { error: "Missing sessionId" };
     const session = getSession(id);
-    if (!session) return { error: "Session not found" };
+    if (!session) {
+      return {
+        error: "Session not found",
+        hint: "Serverless sessions expire. Use shareUrl (?data=...) from MCP tools or re-create the path.",
+      };
+    }
     return session.data;
   }
 
